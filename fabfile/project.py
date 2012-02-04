@@ -40,7 +40,7 @@ def init(name=None):
         )
         if testfile_test.failed:
             local("touch tests/%s_tests.py" % DEFAULT_PROJECT_NAME)
-        tfp = "%s/%s_tests.py"
+        tfp = os.path.join(TEST_DIR, "%s_tests.py")
         local("mv %s %s" % (tfp % DEFAULT_PROJECT_NAME, tfp % name))
 
 

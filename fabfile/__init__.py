@@ -5,7 +5,7 @@ import doc, git, project, test
 def init(name=None):
     """docstring for init"""
     project.init(name)
-    doc.build()
+    doc.reset()
     doc.view()
 
 @task
