@@ -1,5 +1,4 @@
 from nose.tools import *
-import NAME
 
 def setup():
     """Setup tests."""
