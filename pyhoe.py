@@ -1,6 +1,5 @@
-import sys, os
+import sys
 import argparse
-import pyhoe
 
 try:
     import sneaze
@@ -10,14 +9,11 @@ except ImportError:
 
 # Each command is represented by a directory.
 # Inelegant but suits our purposes for the time being.
-MAIN_DIRECTORY = "pyhoe"
-COMMANDS = [
-    d for d in os.listdir(MAIN_DIRECTORY) if os.path.isdir(
-        os.path.join(MAIN_DIRECTORY, d)
-    )
-]
+PACKAGE_DIRECTORY = "pyhoe"
+COMMANDS = ("startproject",)
 
-if __name__ == "__main__":
+def main():
+    print "pyhoe.py:", sys.argv
     # Instantiate argument parser, add arguments.
     parser = argparse.ArgumentParser(
         prog="pyhoe",
@@ -34,6 +30,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "options",
         nargs = "*",
+        default = argparse.SUPPRESS,
         help = (
             "Add any option flags or positional arguments for "
             "the specified action. You can see options by simply "
@@ -47,8 +44,13 @@ if __name__ == "__main__":
         sys.exit(0) # TODO - Perhaps exit with error?
 
     # Pass remaining args to appropriate function.
-    args = vars(parser.parse_args(sys.argv[1:]))
+    # FIXME - Hacky.
+    args = vars(parser.parse_args(sys.argv[1:2]))
     for c in COMMANDS:
         if args["action"] == c:
-            module = "pyhoe.%s.command" % c
-            __import__(module).execute(sys.argv[2:])
+            module = "%s.%s.command" % (PACKAGE_DIRECTORY, c)
+            __import__(module, fromlist=["pyhoe"]).execute(sys.argv[2:])
+
+
+if __name__ == "__main__":
+    main()

@@ -2,16 +2,12 @@
 
 import os, sys
 import argparse
-from pyhoe.delegator import BaseCommandDelegator
+from pyhoe.utils import git
+from pyhoe.startproject.delegator import StartProjectCommandDelegator
 
-# FIXME - Place this somewhere 
 TEMPLATE_DIR = "templates"
 
-class StartProjectCommandDelegator(BaseCommandDelegator):
-    pass
-
-
-def default_temaplate():
+def default_template():
     """
     Returns a string representing the default template directory.
     """
@@ -28,6 +24,11 @@ def parse(sysargs):
     Returns a __dict__ representation of
     the parsed arguments.
     """
+    author_name = (
+        git.get_config_value("github.name") or
+        git.get_config_value("user.name")
+    )
+
     parser = argparse.ArgumentParser(
         prog="pyhoe startproject",
         description = (
@@ -37,6 +38,24 @@ def parse(sysargs):
     parser.add_argument(
         "project_name",
         help = "The name of the project."
+    )
+    parser.add_argument(
+        "-a", "--author_name",
+        default = author_name,
+        help = (
+            "Your name. If not specified, the values in "
+            "your global gitconfig will be used."
+        )
+    )
+    parser.add_argument(
+        "-e", "--email",
+        dest = "author_email",
+        default = git.get_config_value("user.email"),
+        help = (
+            "Your email address. If not "
+            "specified, the values in your global gitconfig "
+            "will be used."
+        )
     )
     parser.add_argument(
         "-c", "--cucumber",
@@ -56,7 +75,7 @@ def parse(sysargs):
     parser.add_argument(
         "-t", "--template",
         choices = os.listdir(TEMPLATE_DIR),
-        default = default_temaplate(),
+        default = default_template(),
         help = "The template to use for your project."
     )
     parser.add_argument(
@@ -66,18 +85,23 @@ def parse(sysargs):
             "Skip all confirmation and use recommended settings."
         )
     )
+
+    print __file__, sysargs
+    if len(sysargs) <= 0:
+        parser.print_help()
+        sys.exit(0)
+
     return vars(parser.parse_args(sysargs))
 
 
-def execute(args=None):
+def execute(args):
     """
     Parses sys.args or args parameter and executes
     the parsed values using CommandLineDelegator.
     """
-    a = args or sys.argv
-    delegator = StartProjectCommandDelegator(parse(a))
+    delegator = StartProjectCommandDelegator(parse(args))
     delegator.dispatch()
 
 
 if __name__ == "__main__":
-    execute()
+    execute(sys.argv)

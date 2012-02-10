@@ -38,12 +38,12 @@ config = {
     # Author is required. Alternatively, a maintainer may be
     # specified using the 'maintainer' and 'maintainer_email'
     # parameters. (<200 chars)
-    'author': 'AUTHOR',
+    'author': 'AUTHOR_NAME',
     'author_email': 'AUTHOR_EMAIL',
     # A short description of the project (<200 chars)
-    'description': 'DESCRIPTION',
+    # 'description': 'DESCRIPTION',
     # Location where the package may be downloaded.
-    'download_url': 'DOWNLOAD_URL',
+    # 'download_url': 'DOWNLOAD_URL',
     # Packages and data files included in the project.
     'packages': packages,
     'data_files': data_files,

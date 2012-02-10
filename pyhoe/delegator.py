@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 
-import os, sys
-import subprocess
-
 class InvalidCommandException(Exception):
     """
     An exception raised when an argument supplied
@@ -21,11 +18,6 @@ class BaseCommandDelegator(object):
     Also handles validation of arguments supplied
     from the command line.
     """
-    @staticmethod
-    def clean(target_func):
-        """docstring for clean"""
-        target_func.im_self.clean_args()
-
     def __init__(self, args):
         self.args = args
 
@@ -34,17 +26,11 @@ class BaseCommandDelegator(object):
         Cleans and packs command line arguments and passes
         them to ProjectBuilder.
         """
-        build_args = {
-            "project_name": self.args["project_name"],
-            "template": self.args["template"],
-            "skip_confirmation": self.args["yes_to_all"]
-        }
-        if self.args["python_exe"]:
-            build_args = dict(
-                build_args.items() + ("python_exe", self.args["python_exe"])
-            )
-        # p = builder.ProjectBuilder()
-        # p.build(**build_args)
+        self.clean_args()
+        __import__(
+            "%s.%s.executor" % ("pyhoe", "startproject"),
+            fromlist = ["pyhoe"]
+        ).execute(**self.args)
 
     def clean_args(self):
         """
@@ -52,7 +38,6 @@ class BaseCommandDelegator(object):
         method for each, if one exists. If a validation method
         does not exist, no validation is performed.
         """
-        print "clean_args"
         for key, val in self.args.items():
             try:
                 # Validate input for key.
@@ -61,31 +46,3 @@ class BaseCommandDelegator(object):
             except AttributeError:
                 # No clean method for key.
                 pass
-
-    def clean_project_name(self, project_name):
-        """
-        Validates input for project_name.
-        """
-        if project_name in os.listdir(os.getcwd()):
-            errmsg = (
-                "A directory named `%s` already exists in this directory. "
-                "Choose a different project name and try again."
-                % project_name
-            )
-            raise InvalidCommandException(1, errmsg)
-
-    def clean_python_exe(self, python_exe):
-        """
-        Validates input for python_exe.
-        """
-        try:
-            # FIXME - Prevent shell from writing to stdout.
-            sys.stderr.write("Checking for %s...\n" % python_exe)
-            subprocess.check_call("which %s" % python_exe, shell=True)
-            sys.stderr.write("OK!\n")
-        except subprocess.CalledProcessError:
-            errmsg = (
-                "The Python executable you specified does not "
-                "seem to be on your path."
-            )
-            raise InvalidCommandException(2, errmsg)
