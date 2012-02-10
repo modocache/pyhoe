@@ -2,7 +2,6 @@
 
 import os, sys
 import subprocess
-import builder
 
 class InvalidCommandException(Exception):
     """
@@ -16,21 +15,25 @@ class InvalidCommandException(Exception):
         return "[Errno %d] %s" % (self.serial, self.msg)
 
 
-class CommandLineDelegator(object):
+class BaseCommandDelegator(object):
     """
     Performs commands based on arguments provided.
     Also handles validation of arguments supplied
     from the command line.
     """
+    @staticmethod
+    def clean(target_func):
+        """docstring for clean"""
+        target_func.im_self.clean_args()
+
     def __init__(self, args):
         self.args = args
 
-    def execute(self):
+    def dispatch(self):
         """
         Cleans and packs command line arguments and passes
         them to ProjectBuilder.
         """
-        self.clean_args()
         build_args = {
             "project_name": self.args["project_name"],
             "template": self.args["template"],
@@ -40,9 +43,8 @@ class CommandLineDelegator(object):
             build_args = dict(
                 build_args.items() + ("python_exe", self.args["python_exe"])
             )
-        p = builder.ProjectBuilder()
-        p.build(**build_args)
-
+        # p = builder.ProjectBuilder()
+        # p.build(**build_args)
 
     def clean_args(self):
         """
@@ -50,6 +52,7 @@ class CommandLineDelegator(object):
         method for each, if one exists. If a validation method
         does not exist, no validation is performed.
         """
+        print "clean_args"
         for key, val in self.args.items():
             try:
                 # Validate input for key.

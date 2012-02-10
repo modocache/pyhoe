@@ -1,21 +1,21 @@
-import sys
-import types
+import sys, os
 import argparse
-from pyhoe import commands as cmds
-from pyhoe.commands import *
+import pyhoe
 
-COMMANDS = list((
-    cmds.__dict__.get(c) for c in dir(cmds) if isinstance(
-        cmds.__dict__.get(c), types.ModuleType
+try:
+    import sneaze
+    SNEAZR_ENABLED = True
+except ImportError:
+    SNEAZR_ENABLED = False
+
+# Each command is represented by a directory.
+# Inelegant but suits our purposes for the time being.
+MAIN_DIRECTORY = "pyhoe"
+COMMANDS = [
+    d for d in os.listdir(MAIN_DIRECTORY) if os.path.isdir(
+        os.path.join(MAIN_DIRECTORY, d)
     )
-))
-
-def available_command_names():
-    """
-    Returns a list of command names in pyhoe.commands.
-    """
-    return [c.__name__.split(".")[-1] for c in COMMANDS]
-
+]
 
 if __name__ == "__main__":
     # Instantiate argument parser, add arguments.
@@ -28,7 +28,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "action",
-        choices = available_command_names(),
+        choices = COMMANDS,
         help = "Choose an action for pyhoe to perform."
     )
     parser.add_argument(
@@ -49,5 +49,6 @@ if __name__ == "__main__":
     # Pass remaining args to appropriate function.
     args = vars(parser.parse_args(sys.argv[1:]))
     for c in COMMANDS:
-        if args["action"] == c.__name__.split(".")[-1]:
-            c.execute(sys.argv[2:])
+        if args["action"] == c:
+            module = "pyhoe.%s.command" % c
+            __import__(module).execute(sys.argv[2:])

@@ -2,10 +2,14 @@
 
 import os, sys
 import argparse
-from cmdline import CommandLineDelegator
+from pyhoe.delegator import BaseCommandDelegator
 
 # FIXME - Place this somewhere 
 TEMPLATE_DIR = "templates"
+
+class StartProjectCommandDelegator(BaseCommandDelegator):
+    pass
+
 
 def default_temaplate():
     """
@@ -18,7 +22,7 @@ def default_temaplate():
         return os.listdir(TEMPLATE_DIR)[0]
 
 
-def parse_cl_args(sysargs):
+def parse(sysargs):
     """
     Uses argparse to handle user input.
     Returns a __dict__ representation of
@@ -71,8 +75,8 @@ def execute(args=None):
     the parsed values using CommandLineDelegator.
     """
     a = args or sys.argv
-    delegator = CommandLineDelegator(parse_cl_args(a))
-    delegator.execute()
+    delegator = StartProjectCommandDelegator(parse(a))
+    delegator.dispatch()
 
 
 if __name__ == "__main__":
