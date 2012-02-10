@@ -86,7 +86,6 @@ def parse(sysargs):
         )
     )
 
-    print __file__, sysargs
     if len(sysargs) <= 0:
         parser.print_help()
         sys.exit(0)
