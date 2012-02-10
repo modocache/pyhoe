@@ -33,6 +33,7 @@ class CommandLineDelegator(object):
         self.clean_args()
         build_args = {
             "project_name": self.args["project_name"],
+            "template": self.args["template"],
             "skip_confirmation": self.args["yes_to_all"]
         }
         if self.args["python_exe"]:
