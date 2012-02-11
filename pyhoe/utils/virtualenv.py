@@ -36,7 +36,7 @@ def virtualenvwrapper_available():
             return False
     return False
 
-def mkvirtualenv(name, packages_to_install=[]):
+def mkvirtualenv(name, env_dir=None, packages_to_install=[]):
     """
     Creates a virtualenv with the specified name.
     Returns True if successful, False otherwise.
@@ -62,8 +62,14 @@ def mkvirtualenv(name, packages_to_install=[]):
                 "detected."
             )
         return True
-    elif virtualenv_available():
+    elif virtualenv_available() and env_dir is not None:
         subprocess.call("virtualenv %s" % name, shell=True)
+        if internet_connection_available():
+            for p in packages_to_install:
+                subprocess.call(
+                    ". %s/%s/bin/activate && pip install %s"
+                    % (env_dir, name, p)
+                )
         return True
     return False
 
@@ -87,6 +93,13 @@ def check_env_for_package(env, package):
         else:
             return False
     elif virtualenv_available():
-        # FIXME - Normal virtualenv is a pain. :(
-        pass
+        freeze = subprocess.call(
+            ". %s/bin/activate && pip freeze" % env,
+            stderr = subprocess.STDOUT,
+            shell = True
+        ).lower()
+        if re.search(package.lower(), freeze):
+            return True
+        else:
+            return False
     return False

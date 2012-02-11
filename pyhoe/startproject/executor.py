@@ -128,7 +128,10 @@ def execute(
             # Create a virtualenv in the project directory.
             # FIXME - Not sure if this is a good idea, I've never
             # used virtualenv without virtualenvwrapper.
-            virtualenv.mkvirtualenv(".%s" % project_name)
+            virtualenv.mkvirtualenv(
+                ".%s" % project_name,
+                env_dir = project_name
+            )
 
     # Change to project dir
     os.chdir(join(os.getcwd(), project_name))
