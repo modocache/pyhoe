@@ -18,7 +18,6 @@ def check_for_git(func, **kwargs):
         return func(*args)
     return wrapper
 
-
 @check_for_git
 def get_global_config():
     return subprocess.check_output(
@@ -44,3 +43,8 @@ def get_config_value(val):
         except IndexError:
             pass
     return None
+
+@check_for_git
+def git_init():
+    """Runs git init."""
+    subprocess.call("git init", shell=True)

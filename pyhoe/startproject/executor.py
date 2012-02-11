@@ -1,9 +1,11 @@
 import sys, os
 from os.path import join, dirname
+import subprocess
 import shutil
 import re
 from pyhoe.startproject.command import TEMPLATE_DIR
-
+from pyhoe.utils import virtualenv, git
+from pyhoe.utils.console import confirm
 
 # FIXME - Place this in utils module.
 def color_terminal():
@@ -33,6 +35,8 @@ def describe(path, action="created"):
     else:
         if action == "created":
             print "...created %s" % relpath
+
+DEFAULT_PACKAGES = ["nosy", "sneazr", "tox", "Fabric"]
 
 def execute(
     project_name,
@@ -84,3 +88,60 @@ def execute(
             describe(join(root, d))
         for f in files:
             describe(join(root, dirname(f), f))
+
+    # Create virtualenv
+    packages_to_install = []
+    if virtualenv.virtualenvwrapper_available():
+        if (
+            yes_to_all or
+            confirm("Create virtualenv %s for this project?" % project_name)
+        ):
+            # Determine packages to install.
+            if (
+                yes_to_all or
+                confirm(
+                    "Install recommended packages to virtualenv %s?"
+                    % project_name
+                )
+            ):
+                for package in DEFAULT_PACKAGES:
+                    packages_to_install.append(package)
+
+            # Check for documentation.
+            if (
+                yes_to_all or
+                confirm("Create documentation for %s?" % project_name)
+            ):
+                packages_to_install.append("Sphinx")
+
+            virtualenv.mkvirtualenv(
+                project_name,
+                packages_to_install
+            )
+    elif virtualenv.virtualenv_available():
+        vpath = join(project_name, ".%s" % project_name)
+        if (
+            yes_to_all or
+            confirm("Create virtualenv %s for this project?" % vpath)
+        ):
+            os.chdir(join(os.getcwd(), project_name))
+            # Create a virtualenv in the project directory.
+            # FIXME - Not sure if this is a good idea, I've never
+            # used virtualenv without virtualenvwrapper.
+            virtualenv.mkvirtualenv(".%s" % project_name)
+
+    # Change to project dir
+    os.chdir(join(os.getcwd(), project_name))
+
+    # Initialize git repository.
+    if (
+        yes_to_all or
+        confirm("Initialize git repository for this project?")
+    ):
+        git.git_init()
+
+    if virtualenv.check_env_for_package(project_name, "Sphinx"):
+        os.mkdir("docs")
+        os.chdir("docs")
+        subprocess.call("sphinx-quickstart", shell=True)
+
