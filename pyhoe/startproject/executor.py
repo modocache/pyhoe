@@ -36,7 +36,7 @@ def describe(path, action="created"):
         if action == "created":
             print "...created %s" % relpath
 
-DEFAULT_PACKAGES = ["nosy", "sneazr", "tox", "Fabric"]
+DEFAULT_PACKAGES = ["nose", "nosy", "coverage", "tox", "Fabric"]
 
 def execute(
     project_name,
@@ -143,6 +143,8 @@ def execute(
     ):
         git.git_init()
 
+    # FIXME - Should create some way for templates to implement their
+    # own logic.
     if virtualenv.check_env_for_package(project_name, "Sphinx"):
         os.mkdir("docs")
         os.chdir("docs")

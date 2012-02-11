@@ -1,12 +1,6 @@
 import sys
 import argparse
 
-try:
-    import sneaze
-    SNEAZR_ENABLED = True
-except ImportError:
-    SNEAZR_ENABLED = False
-
 # Each command is represented by a directory.
 # Inelegant but suits our purposes for the time being.
 PACKAGE_DIRECTORY = "pyhoe"
