@@ -5,7 +5,7 @@ import argparse
 from pyhoe.utils import git
 from pyhoe.startproject.delegator import StartProjectCommandDelegator
 
-TEMPLATE_DIR = "templates"
+TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), "templates")
 
 def default_template():
     """
