@@ -1,2 +1,4 @@
 include LICENSE
 recursive-include pyhoe/sow/templates *
+global-exclude .DS_Store
+global-exclude *.swp

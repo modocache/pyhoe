@@ -71,10 +71,14 @@ def execute(
                 if setting is not None:
                     r = re.compile(PLACEHOLDERS[i])
                     data = ""
-                    with open(join(root, dirname(f), f), "r") as read_file:
-                        data = re.sub(r, setting, read_file.read())
-                    with open(join(root, dirname(f), f), "w") as write_file:
-                        write_file.write(data)
+                    try:
+                        with open(join(root, dirname(f), f), "r") as rf:
+                            data = re.sub(r, setting, rf.read())
+                        with open(join(root, dirname(f), f), "w") as wf:
+                            wf.write(data)
+                    except UnicodeDecodeError:
+                        # Ignore failures to open illegal files.
+                        pass
 
             # Rename any files with PROJECT_NAME in them.
             os.rename(
