@@ -4,3 +4,5 @@
 *.swp
 .coverage
 .tox
+dist
+*.egg-info
