@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-VERSION = (0, 0, 1, 'alpha', 3)
+VERSION = (0, 0, 1, 'alpha', 4)
 
 def get_version(version=None):
     """
