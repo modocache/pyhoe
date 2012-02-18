@@ -18,9 +18,6 @@ settings include the following:
 - [Tox](http://tox.readthedocs.org/en/latest/index.html), for testing
   across multiple Python environments.
 - [Sphinx](http://sphinx.pocoo.org/) for project documentation.
-- A [fabfile](http://docs.fabfile.org/en/1.3.4/index.html) for
-  performing common tasks such as building documentation and project
-  packaging.
 
 # Requirements & Dependencies
 
@@ -31,50 +28,41 @@ although I am considering supporting Python 2.6 as well.
 
 ## Starting a New Project
 
-    $ pyhoe sow my_new_project
-    Create a virtualenv (my_new_project)? [Y/n] > Y
-    ... mkvirtualenv my_new_project
-    ... (my_new_project) pip install nosy sneazr tox Sphinx Fabric
-    
-    ... created my_new_project/
-    ... created my_new_project/README.md
-    ... created my_new_project/.gitignore
-    ... created my_new_project/__init__.py
-    ... created my_new_project/setup.py
-    ... created my_new_project/bin
-    ... created my_new_project/tests/
-    ... created my_new_project/tests/__init__.py
-    ... created my_new_project/tests/my_new_project_tests.py
-    ... created my_new_project/fabfile/
-    ... created my_new_project/fabfile/__init__.py
-    ... created my_new_project/fabfile/doc.py
-    ... created my_new_project/fabfile/git.py
-    ... created my_new_project/fabfile/project.py
-    ... created my_new_project/fabfile/test.py
-    
-    ... initialized git repository.
-    
-    Would you like to create documentation for this project? [Y/n] > Y
-    ... running sphinx-quickstart
-    ... building Sphinx HTML.
+    $ pyhoe sow smoothjazz
+    Create virtualenv smoothjazz for this project? [Y/n]: Y
+    Install recommended packages to virtualenv smoothjazz? [Y/n]: Y
+    Create documentation for smoothjazz? [Y/n]: Y
+    Initialize git repository for this project? [Y/n]: Y
+    ...created smoothjazz
+    ...created smoothjazz/tests
+    ...created smoothjazz/smoothjazz
+    ...created smoothjazz/.gitignore
+    ...created smoothjazz/CHANGELOG.md
+    ...created smoothjazz/MANIFEST.in
+    ...created smoothjazz/MIT-LICENSE
+    ...created smoothjazz/README.md
+    ...created smoothjazz/setup.cfg
+    ...created smoothjazz/setup.py
+    ...created smoothjazz/tox.ini
+    ...created smoothjazz/tests
+    ...created smoothjazz/tests/__init__.py
+    ...created smoothjazz/tests/smoothjazz_tests.py
+    ...created smoothjazz/smoothjazz
+    ...created smoothjazz/smoothjazz/__init__.py
+    ...created smoothjazz/smoothjazz/main.py
+
+    New python executable in zzz/bin/python
+    [creates virtualenv]
+    [installs packages]
+   
+    Initialized empty Git repository in zoobar/.git/
+
+    [runs sphinx-quickstart]
     
     Happy coding!
     $
 
-## Getting More Information
-
-    $ pyhoe explain tox
-
 # Options
 
-- Fans of behavior-driven development can pass pyhoe the `-c` or 
-  `--cucumber` flag to include basic templates for using [freshen](https://github.com/rlisagor/freshen),
-  a Python clone of the Cucumber BDD framework.
 - Too many decisions? Just use the `-y` or `--yes-to-all` flag to go
   with all the recommended settings.
-
-- - -
-
-# Fabfile Usage
-
-Coming soon!
