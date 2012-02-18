@@ -19,10 +19,6 @@ settings include the following:
   across multiple Python environments.
 - [Sphinx](http://sphinx.pocoo.org/) for project documentation.
 
-# Requirements & Dependencies
-
-Python 2.7 or superior (that includes 3.0+) is required to use pyhoe for now,
-although I am considering supporting Python 2.6 as well.
 
 # Usage
 
@@ -62,7 +58,12 @@ although I am considering supporting Python 2.6 as well.
     Happy coding!
     $
 
-# Options
+## Options
 
 - Too many decisions? Just use the `-y` or `--yes-to-all` flag to go
   with all the recommended settings.
+
+# Requirements & Dependencies
+
+Python 2.7 or superior (that includes 3.0+) is required to use pyhoe for now,
+although I am considering supporting Python 2.6 as well.
