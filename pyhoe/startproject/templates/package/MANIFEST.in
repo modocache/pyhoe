@@ -1,4 +1,0 @@
-include README.md CHANGELOG.md LICENSE
-recursive-include scripts *
-recursive-include tests *
-prune tests/bad_test.py

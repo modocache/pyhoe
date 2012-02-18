@@ -1,9 +1,8 @@
 #!/usr/bin/env python
-
 import os, sys
 import argparse
 from pyhoe.utils import git
-from pyhoe.startproject.delegator import StartProjectCommandDelegator
+from pyhoe.sow.delegator import SowCommandDelegator
 
 TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), "templates")
 
@@ -30,7 +29,7 @@ def parse(sysargs):
     )
 
     parser = argparse.ArgumentParser(
-        prog="pyhoe startproject",
+        prog="pyhoe sow",
         description = (
             "Initializes a Python project using established best practices."
         )
@@ -57,11 +56,12 @@ def parse(sysargs):
             "will be used."
         )
     )
-    parser.add_argument(
-        "-c", "--cucumber",
-        action = "store_true",
-        help = "Use freshen for behavior-driven development."
-    )
+    # TODO
+    # parser.add_argument(
+    #     "-c", "--cucumber",
+    #     action = "store_true",
+    #     help = "Use freshen for behavior-driven development."
+    # )
     parser.add_argument(
         "-p", "--python",
         dest = "python_exe",
@@ -98,7 +98,7 @@ def execute(args):
     Parses sys.args or args parameter and executes
     the parsed values using CommandLineDelegator.
     """
-    delegator = StartProjectCommandDelegator(parse(args))
+    delegator = SowCommandDelegator(parse(args))
     delegator.dispatch()
 
 

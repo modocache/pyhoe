@@ -2,12 +2,12 @@ import os
 import subprocess
 import re
 
-def check_for_git(func, **kwargs):
+def check_for_git(function):
     """
     Makes sure git is installed on the system.
     Returns None if it is not.
     """
-    def wrapper(*args):
+    def _check_for_git(*args, **kwargs):
         try:
             subprocess.check_call(
                 "git config --global --list &> /dev/null",
@@ -15,15 +15,18 @@ def check_for_git(func, **kwargs):
             )
         except subprocess.CalledProcessError:
             return None
-        return func(*args)
-    return wrapper
+        return function(*args, **kwargs)
+    return _check_for_git
+
 
 @check_for_git
 def get_global_config():
-    return subprocess.check_output(
-        "git config --global --list",
-        stderr = subprocess.STDOUT,
-        shell = True
+    return bytes.decode(
+        subprocess.check_output(
+            "git config --global --list",
+            stderr = subprocess.STDOUT,
+            shell = True
+        )
     )
 
 @check_for_git

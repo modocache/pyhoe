@@ -1,2 +1,2 @@
 include LICENSE
-recursive-include pyhoe/startproject/templates *
+recursive-include pyhoe/sow/templates *

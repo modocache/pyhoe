@@ -2,7 +2,7 @@ import os
 import subprocess
 from pyhoe.delegator import BaseCommandDelegator, InvalidCommandException
 
-class StartProjectCommandDelegator(BaseCommandDelegator):
+class SowCommandDelegator(BaseCommandDelegator):
     """
     Validates commands for startproject.
     """

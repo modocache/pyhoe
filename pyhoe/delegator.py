@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+import os
 
 class InvalidCommandException(Exception):
     """
@@ -21,14 +21,17 @@ class BaseCommandDelegator(object):
     def __init__(self, args):
         self.args = args
 
-    def dispatch(self):
+    def dispatch(self, command_name=None):
         """
         Cleans and packs command line arguments and passes
         them to ProjectBuilder.
         """
         self.clean_args()
+        if command_name is None:
+            command_name = \
+                self.__class__.__name__[:-len("CommandDelegator")].lower()
         __import__(
-            "%s.%s.executor" % ("pyhoe", "startproject"),
+            "%s.%s.executor" % ("pyhoe", command_name),
             fromlist = ["pyhoe"]
         ).execute(**self.args)
 

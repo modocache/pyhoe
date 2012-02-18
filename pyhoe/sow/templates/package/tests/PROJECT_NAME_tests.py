@@ -1,4 +1,5 @@
 from nose.tools import *
+import PROJECT_NAME
 
 def setup():
     """Setup tests."""
@@ -8,6 +9,5 @@ def teardown():
     """Tear down tests."""
     pass
 
-def test_tests_exist():
-    """Ensures that tests exist for this project."""
-    assert False, "Tests not implemented."
+def test_get_version():
+    assert type(PROJECT_NAME.get_version()) == str

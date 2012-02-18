@@ -1,42 +1,20 @@
-import sys, os
+import os
 from os.path import join, dirname
 import subprocess
 import shutil
 import re
-from pyhoe.startproject.command import TEMPLATE_DIR
+from pyhoe.sow.command import TEMPLATE_DIR
 from pyhoe.utils import virtualenv, git
-from pyhoe.utils.console import confirm
+from pyhoe.utils.console import confirm, print_green, print_yellow
 
-# FIXME - Place this in utils module.
-def color_terminal():
-    """
-    Returns True if terminal supports colored output,
-    False otherwise.
-    """
-    if not hasattr(sys.stdout, 'isatty'):
-        return False
-    if not sys.stdout.isatty():
-         return False
-    if 'COLORTERM' in os.environ:
-        return True
-    term = os.environ.get('TERM', 'dumb').lower()
-    if term in ('xterm', 'linux') or 'color' in term:
-        return True
-    return False
+DEFAULT_PACKAGES = ["nose", "nosy", "coverage", "sneazr", "tox"]
 
 def describe(path, action="created"):
-    """
-    Describes the action being performed.
-    """
-    relpath = os.path.relpath(path)
-    if color_terminal():
-        if action == "created":
-            print "%s...created %s%s" % ("\033[32m", relpath, "\033[0m")
-    else:
-        if action == "created":
-            print "...created %s" % relpath
-
-DEFAULT_PACKAGES = ["nose", "nosy", "coverage", "tox", "Fabric"]
+    """Describes the action being performed."""
+    if action == "created":
+        print_green("...created %s\n" % os.path.relpath(path))
+    elif action == "moved":
+        print_yellow("cd %s" % os.path.abspath(path))
 
 def execute(
     project_name,
@@ -47,6 +25,29 @@ def execute(
     python_exe=None,
     yes_to_all=False
 ):
+    # Confirm options
+    should_create_virtualenv = should_install_packages = \
+    should_create_docs = should_git_init = yes_to_all
+    if not yes_to_all:
+        should_create_virtualenv = confirm(
+            "Create virtualenv %s for this project?" % project_name
+        )
+        should_install_packages = (
+            should_create_virtualenv and
+            virtualenv.virtualenvwrapper_available() and
+            confirm(
+                "Install recommended packages to virtualenv %s?"
+                % project_name
+            )
+        )
+        should_create_docs = (
+            should_install_packages and
+            confirm("Create documentation for %s?" % project_name)
+        )
+        should_git_init = confirm(
+            "Initialize git repository for this project?"
+        )
+
     # Copy template.
     shutil.copytree(join(TEMPLATE_DIR, template), project_name)
 
@@ -78,7 +79,10 @@ def execute(
             # Rename any files with PROJECT_NAME in them.
             os.rename(
                 join(root, dirname(f), f),
-                join(root, dirname(f), re.sub(r, project_name, f))
+                join(
+                    root, dirname(f),
+                    re.sub(PLACEHOLDERS[0], project_name, f)
+                )
             )
 
     # Display what was created.
@@ -92,44 +96,30 @@ def execute(
     # Create virtualenv
     packages_to_install = []
     if virtualenv.virtualenvwrapper_available():
-        if (
-            yes_to_all or
-            confirm("Create virtualenv %s for this project?" % project_name)
-        ):
+        if should_create_virtualenv:
             # Determine packages to install.
-            if (
-                yes_to_all or
-                confirm(
-                    "Install recommended packages to virtualenv %s?"
-                    % project_name
-                )
-            ):
+            if should_install_packages:
                 for package in DEFAULT_PACKAGES:
                     packages_to_install.append(package)
 
             # Check for documentation.
-            if (
-                yes_to_all or
-                confirm("Create documentation for %s?" % project_name)
-            ):
+            if should_create_docs:
                 packages_to_install.append("Sphinx")
 
             virtualenv.mkvirtualenv(
-                project_name,
-                packages_to_install
+                name = project_name,
+                python_exe = python_exe,
+                packages_to_install = packages_to_install
             )
     elif virtualenv.virtualenv_available():
-        vpath = join(project_name, ".%s" % project_name)
-        if (
-            yes_to_all or
-            confirm("Create virtualenv %s for this project?" % vpath)
-        ):
+        if should_create_virtualenv:
             os.chdir(join(os.getcwd(), project_name))
             # Create a virtualenv in the project directory.
             # FIXME - Not sure if this is a good idea, I've never
             # used virtualenv without virtualenvwrapper.
             virtualenv.mkvirtualenv(
-                ".%s" % project_name,
+                name = ".%s" % project_name,
+                python_exe = python_exe,
                 env_dir = project_name
             )
 
@@ -137,16 +127,14 @@ def execute(
     os.chdir(join(os.getcwd(), project_name))
 
     # Initialize git repository.
-    if (
-        yes_to_all or
-        confirm("Initialize git repository for this project?")
-    ):
+    if should_git_init:
         git.git_init()
 
     # FIXME - Should create some way for templates to implement their
     # own logic.
-    if virtualenv.check_env_for_package(project_name, "Sphinx"):
-        os.mkdir("docs")
-        os.chdir("docs")
+    if should_create_docs:
+        docdir = "docs"
+        os.mkdir(docdir)
+        os.chdir(docdir)
         subprocess.call("sphinx-quickstart", shell=True)
 

@@ -9,7 +9,7 @@ import argparse
 # way to do this.
 PACKAGE_DIRECTORY = dirname(dirname(__file__))
 sys.path.append(abspath(PACKAGE_DIRECTORY))
-COMMANDS = ("startproject",)
+COMMANDS = ("sow",)
 for cmd in COMMANDS:
     sys.path.append(join(PACKAGE_DIRECTORY, cmd))
 

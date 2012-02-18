@@ -22,11 +22,16 @@ settings include the following:
   performing common tasks such as building documentation and project
   packaging.
 
+# Requirements & Dependencies
+
+Python 2.7 or superior (that includes 3.0+) is required to use pyhoe for now,
+although I am considering supporting Python 2.6 as well.
+
 # Usage
 
 ## Starting a New Project
 
-    $ pyhoe startproject my_new_project
+    $ pyhoe sow my_new_project
     Create a virtualenv (my_new_project)? [Y/n] > Y
     ... mkvirtualenv my_new_project
     ... (my_new_project) pip install nosy sneazr tox Sphinx Fabric

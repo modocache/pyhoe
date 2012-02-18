@@ -36,20 +36,31 @@ def virtualenvwrapper_available():
             return False
     return False
 
-def mkvirtualenv(name, env_dir=None, packages_to_install=[]):
+def mkvirtualenv(
+    name, python_exe=None, env_dir=None, packages_to_install=None
+):
     """
     Creates a virtualenv with the specified name.
     Returns True if successful, False otherwise.
     """
+    if packages_to_install is None:
+        packages_to_install = []
+
     if virtualenvwrapper_available():
-        path = subprocess.check_output(
+        path = bytes.decode(subprocess.check_output(
             "which virtualenvwrapper.sh",
             shell = True
-        ).strip()
-        subprocess.call(
-            ". %s && mkvirtualenv %s" % (path, name),
-            shell = True
-        )
+        )).strip()
+
+        if python_exe is not None:
+            cmd = (
+                ". %s && mkvirtualenv -p $(which %s) %s" %
+                (path, python_exe, name)
+            )
+        else:
+            cmd = ". %s && mkvirtualenv %s" % (path, name)
+        subprocess.call(cmd, shell = True)
+
         if internet_connection_available():
             for p in packages_to_install:
                 subprocess.call(
@@ -79,25 +90,25 @@ def check_env_for_package(env, package):
     in the specified environment.
     """
     if virtualenvwrapper_available():
-        path = subprocess.check_output(
+        path = bytes.decode(subprocess.check_output(
             "which virtualenvwrapper.sh",
             shell = True
-        ).strip()
-        freeze = subprocess.check_output(
+        )).strip()
+        freeze = bytes.decode(subprocess.check_output(
             ". %s && workon %s && pip freeze" % (path, env),
             stderr = subprocess.STDOUT,
             shell = True
-        ).lower()
+        )).lower()
         if re.search(package.lower(), freeze):
             return True
         else:
             return False
     elif virtualenv_available():
-        freeze = subprocess.call(
+        freeze = bytes.decode(subprocess.call(
             ". %s/bin/activate && pip freeze" % env,
             stderr = subprocess.STDOUT,
             shell = True
-        ).lower()
+        )).lower()
         if re.search(package.lower(), freeze):
             return True
         else:
