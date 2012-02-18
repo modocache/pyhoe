@@ -51,11 +51,11 @@ although I am considering supporting Python 2.6 as well.
     ...created smoothjazz/smoothjazz/__init__.py
     ...created smoothjazz/smoothjazz/main.py
 
-    New python executable in zzz/bin/python
+    New python executable in smoothjazz/bin/python
     [creates virtualenv]
     [installs packages]
    
-    Initialized empty Git repository in zoobar/.git/
+    Initialized empty Git repository in smoothjazz/.git/
 
     [runs sphinx-quickstart]
     
