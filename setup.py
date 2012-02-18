@@ -25,6 +25,9 @@ setup(
        to display Growl notifications on tests results.
      * `Tox <http://tox.readthedocs.org/en/latest/index.html>`_, for testing
        across multiple Python environments.
+
+    For more information, check out the `repository on Github <https://github.com/modocache/pyhoe>`_,
+    or the `online documentation <http://readthedocs.org/docs/pyhoe/en/latest/>`_.
     """,
     keywords = "project setup skeleton",
     tests_require = ["nose"],
