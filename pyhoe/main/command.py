@@ -1,17 +1,19 @@
 #!/usr/bin/env python
 
 import sys
-from os.path import dirname, join, abspath
 import argparse
 
-# FIXME - Imports don't seem to work unless I add package
-# directories to my path. Surely this can't be the right
-# way to do this.
-PACKAGE_DIRECTORY = dirname(dirname(__file__))
-sys.path.append(abspath(PACKAGE_DIRECTORY))
+
 COMMANDS = ("sow",)
-for cmd in COMMANDS:
-    sys.path.append(join(PACKAGE_DIRECTORY, cmd))
+
+
+def import_child(module_name):
+    """Dynamically imports child of specified module."""
+    module = __import__(module_name)
+    for layer in module_name.split('.')[1:]:
+        module = getattr(module, layer)
+    return module
+
 
 def main():
     # Instantiate argument parser, add arguments.
@@ -44,15 +46,11 @@ def main():
         sys.exit(0)
 
     # Pass remaining args to appropriate function.
-    # FIXME - Hacky.
     args = vars(parser.parse_args(sys.argv[1:2]))
     for c in COMMANDS:
         if args["action"] == c:
             # FIXME - pyhoe shouldn't be hard-coded here.
-            module = "pyhoe.%s.command" % (c)
-            __import__(
-                module, fromlist=[PACKAGE_DIRECTORY]
-            ).execute(sys.argv[2:])
+            import_child("pyhoe.%s.command" % c).execute(sys.argv[2:])
 
 
 if __name__ == "__main__":
